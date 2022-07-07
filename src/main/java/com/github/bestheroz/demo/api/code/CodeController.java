@@ -203,8 +203,7 @@ public class CodeController {
     whereConditions.remove("orderByConditions");
     return Result.ok(
         this.codeRepository
-            .getTargetItemsByMapOrderBy(targetColumns, whereConditions, orderByConditions)
-            .stream()
+            .getTargetItemsByMapOrderBy(targetColumns, whereConditions, orderByConditions).stream()
             .map(CodeDTO::new)
             .collect(Collectors.toList()));
   }

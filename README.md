@@ -1,4 +1,4 @@
-# mybatis-auto-sql-java11
+# mybatis-auto-sql-java8
 
 **This project that help you not write simple sql when using mybatis.**
 

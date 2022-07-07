@@ -1,4 +1,4 @@
-# mybatis-auto-sql-java8
+# mybatis-auto-sql-java11
 
 **This project that help you not write simple sql when using mybatis.**
 
@@ -61,6 +61,12 @@ private static final String VARIABLE_NAME_CREATED="created"; // no use "-"
 private static final String VARIABLE_NAME_UPDATED_BY="updatedBy"; // no use "-"
 private static final String VARIABLE_NAME_UPDATED="updated"; // no use "-"
 private static final String SYSDATE="NOW()";
+
+추가로 MYSQL 일 경우 아래 주석을 풀어주세요.
+// FIXME: MYSQL 사용시 주석을 풀어 위에 코드를 대체해주세요.
+
+인증정보를 통해 user id 를 가져올 수 있도록 수정하시면 됩니다.
+// FIXME: getUserID()
 ```
 
 #### 3. DB Table 과 동일한 스펙을 가진 Entity 생성
@@ -70,16 +76,16 @@ private static final String SYSDATE="NOW()";
 ```sql
 CREATE TABLE code
 (
-  id            BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
-  type          VARCHAR(100)          NOT NULL,
-  `value`       VARCHAR(100)          NOT NULL,
-  text          VARCHAR(1000)         NOT NULL,
-  available     BOOLEAN DEFAULT FALSE NOT NULL,
-  display_order INT(3) NOT NULL,
-  created_by    BIGINT(20) NOT NULL,
-  created       DATETIME(6) NOT NULL,
-  updated_by    BIGINT(20) NOT NULL,
-  updated       DATETIME(6) NOT NULL
+    id            BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
+    type          VARCHAR(100)          NOT NULL,
+    `value`       VARCHAR(100)          NOT NULL,
+    text          VARCHAR(1000)         NOT NULL,
+    available     BOOLEAN DEFAULT FALSE NOT NULL,
+    display_order INT(3) NOT NULL,
+    created_by    BIGINT(20) NOT NULL,
+    created       DATETIME(6) NOT NULL,
+    updated_by    BIGINT(20) NOT NULL,
+    updated       DATETIME(6) NOT NULL
 ) DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
 ```
@@ -154,27 +160,27 @@ public interface CodeRepository extends SqlRepository<Code> {
 ```java
 List<Code> codes=this.codeRepository.getItemsByMap(Map.of("type","EXAMPLE"));
 
-        List<Code> codes=this.codeRepository.getItemsByMapOrderBy(Map.of("type","EXAMPLE"),orderByConditions);
+    List<Code> codes=this.codeRepository.getItemsByMapOrderBy(Map.of("type","EXAMPLE"),orderByConditions);
 
-        List<Code> codes=this.codeRepository.getItemByMap(Map.of("type","EXAMPLE","value","E2"));
+    List<Code> codes=this.codeRepository.getItemByMap(Map.of("type","EXAMPLE","value","E2"));
 
-        List<Code> codes=this.codeRepository.getTargetItemsByMap(Set.of("type","value","text"),Map.of("type","EXAMPLE"));
+    List<Code> codes=this.codeRepository.getTargetItemsByMap(Set.of("type","value","text"),Map.of("type","EXAMPLE"));
 
-        int count=this.codeRepository.countByMap(Map.of("type","EXAMPLE"));
+    int count=this.codeRepository.countByMap(Map.of("type","EXAMPLE"));
 
-        List<Code> codes=this.codeRepository.getDistinctItemsByMap(Set.of("type"),Map.of("type","EXAMPLE"));;
+    List<Code> codes=this.codeRepository.getDistinctItemsByMap(Set.of("type"),Map.of("type","EXAMPLE"));;
 
-        this.codeRepository.insert(code);
+    this.codeRepository.insert(code);
 
-        this.codeRepository.insertBatch(codes);
+    this.codeRepository.insertBatch(codes);
 
-        this.codeRepository.updateByMap(payload.toCode(),Map.of("type","EXAMPLE","value","E2"));
+    this.codeRepository.updateByMap(payload.toCode(),Map.of("type","EXAMPLE","value","E2"));
 
-        this.codeRepository.updateMapByMap(Map.of("text","예제2-1"),Map.of("type","EXAMPLE","value","E2"));
+    this.codeRepository.updateMapByMap(Map.of("text","예제2-1"),Map.of("type","EXAMPLE","value","E2"));
 
-        this.codeRepository.deleteByMap(Map.of("type","EXAMPLE","value","E2"));
+    this.codeRepository.deleteByMap(Map.of("type","EXAMPLE","value","E2"));
 
-        this.codeRepository.deleteById(5L);
+    this.codeRepository.deleteById(5L);
 ```
 
 ## Demo
@@ -188,64 +194,64 @@ SqlRepository.java
 ```java
 List<T> getItems();
 
-        List<T> getItemsOrderBy(final List<String> orderByConditions);
+    List<T> getItemsOrderBy(final List<String> orderByConditions);
 
-        List<T> getItemsByMap(final Map<String, Object> whereConditions);
+    List<T> getItemsByMap(final Map<String, Object> whereConditions);
 
-        List<T> getItemsByMapOrderBy(final Map<String, Object> whereConditions,final List<String> orderByConditions);
+    List<T> getItemsByMapOrderBy(final Map<String, Object> whereConditions,final List<String> orderByConditions);
 
-        List<T> getDistinctItems(final Set<String> distinctColumns);
+    List<T> getDistinctItems(final Set<String> distinctColumns);
 
-        List<T> getDistinctItemsOrderBy(final Set<String> distinctColumns,final List<String> orderByConditions);
+    List<T> getDistinctItemsOrderBy(final Set<String> distinctColumns,final List<String> orderByConditions);
 
-        List<T> getDistinctItemsByMap(final Set<String> distinctColumns,final Map<String, Object> whereConditions);
+    List<T> getDistinctItemsByMap(final Set<String> distinctColumns,final Map<String, Object> whereConditions);
 
-        List<T> getDistinctItemsByMapOrderBy(final Set<String> distinctColumns,final Map<String, Object> whereConditions,final List<String> orderByConditions);
-
-// Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
-        List<T> getTargetItems(final Set<String> targetColumns);
+    List<T> getDistinctItemsByMapOrderBy(final Set<String> distinctColumns,final Map<String, Object> whereConditions,final List<String> orderByConditions);
 
 // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
-        List<T> getTargetItemsOrderBy(final Set<String> targetColumns,final List<String> orderByConditions);
+    List<T> getTargetItems(final Set<String> targetColumns);
 
 // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
-        List<T> getTargetItemsByMap(final Set<String> targetColumns,final Map<String, Object> whereConditions)
+    List<T> getTargetItemsOrderBy(final Set<String> targetColumns,final List<String> orderByConditions);
 
 // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
-        List<T> getTargetItemsByMapOrderBy(
+    List<T> getTargetItemsByMap(final Set<String> targetColumns,final Map<String, Object> whereConditions)
+
+// Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
+    List<T> getTargetItemsByMapOrderBy(
 final Set<String> targetColumns,
 final Map<String, Object> whereConditions,
 final List<String> orderByConditions);
 
-        List<T> getDistinctAndTargetItemsByMapOrderBy(
+    List<T> getDistinctAndTargetItemsByMapOrderBy(
 final Set<String> distinctColumns,
 final Set<String> targetColumns,
 final Map<String, Object> whereConditions,
 final List<String> orderByConditions);
 
-        Optional<T> getItemByMap(final Map<String, Object> whereConditions);
+    Optional<T> getItemByMap(final Map<String, Object> whereConditions);
 
-        Optional<T> getItemById(final Long id);
+    Optional<T> getItemById(final Long id);
 
-        int countAll();
+    int countAll();
 
-        int countByMap(final Map<String, Object> whereConditions);
+    int countByMap(final Map<String, Object> whereConditions);
 
-        void insert(final T entity);
+    void insert(final T entity);
 
-        void insertBatch(final List<T> entities);
+    void insertBatch(final List<T> entities);
 
-        void updateById(final T entity,final Long id);
+    void updateById(final T entity,final Long id);
 
-        void updateByMap(final T entity,final Map<String, Object> whereConditions);
+    void updateByMap(final T entity,final Map<String, Object> whereConditions);
 
-        void updateMapByMap(final Map<String, Object> updateMap,final Map<String, Object> whereConditions);
+    void updateMapByMap(final Map<String, Object> updateMap,final Map<String, Object> whereConditions);
 
-        void updateMapById(final Map<String, Object> updateMap,final Long id);
+    void updateMapById(final Map<String, Object> updateMap,final Long id);
 
-        void deleteByMap(final Map<String, Object> whereConditions);
+    void deleteByMap(final Map<String, Object> whereConditions);
 
-        void deleteById(final Long id);
+    void deleteById(final Long id);
 ```
 
 ## Where conditions
@@ -276,8 +282,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        `type` = 'EXAMPLE'
-        )
+          `type` = 'EXAMPLE'
+          )
 ```
 
 ```sql
@@ -293,13 +299,13 @@ this.codeRepository.updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        `display_order` = 3
-        )
+          `display_order` = 3
+          )
 ```
 
 ```sql
@@ -317,8 +323,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        `display_order` = 3
-        )
+          `display_order` = 3
+          )
 ```
 
 - `not equals(!=)`
@@ -345,8 +351,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        `type` <> 'EXAMPLE'
-        )
+          `type` <> 'EXAMPLE'
+          )
 ```
 
 ```sql
@@ -360,13 +366,13 @@ updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        `display_order` <> 3
-        )
+          `display_order` <> 3
+          )
 ```
 
 ```sql
@@ -382,8 +388,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        `display_order` <> 3
-        )
+          `display_order` <> 3
+          )
 ```
 
 - `in`
@@ -410,8 +416,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        `type` IN ('EXAMPLE', 'SAMPLE')
-        )
+          `type` IN ('EXAMPLE', 'SAMPLE')
+          )
 ```
 
 ```sql
@@ -425,13 +431,13 @@ updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        `display_order` IN (1, 3)
-        )
+          `display_order` IN (1, 3)
+          )
 ```
 
 ```sql
@@ -447,8 +453,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        `display_order` IN (1, 3)
-        )
+          `display_order` IN (1, 3)
+          )
 ```
 
 - `not in`
@@ -475,8 +481,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        `type` NOT IN ('EXAMPLE', 'SAMPLE')
-        )
+          `type` NOT IN ('EXAMPLE', 'SAMPLE')
+          )
 ```
 
 ```sql
@@ -490,13 +496,13 @@ updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        `display_order` NOT IN (1, 3)
-        )
+          `display_order` NOT IN (1, 3)
+          )
 ```
 
 ```sql
@@ -512,8 +518,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        `display_order` NOT IN (1, 3)
-        )
+          `display_order` NOT IN (1, 3)
+          )
 ```
 
 - `is null`
@@ -540,8 +546,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        `type` IS NULL
-        )
+          `type` IS NULL
+          )
 ```
 
 ```sql
@@ -555,13 +561,13 @@ updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        `display_order` IS NULL
-        )
+          `display_order` IS NULL
+          )
 ```
 
 ```sql
@@ -577,8 +583,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        `display_order` IS NULL
-        )
+          `display_order` IS NULL
+          )
 ```
 
 - `is not null`
@@ -605,8 +611,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        `type` IS NOT NULL
-        )
+          `type` IS NOT NULL
+          )
 ```
 
 ```sql
@@ -620,13 +626,13 @@ updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        `display_order` IS NOT NULL
-        )
+          `display_order` IS NOT NULL
+          )
 ```
 
 ```sql
@@ -642,8 +648,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        `display_order` IS NOT NULL
-        )
+          `display_order` IS NOT NULL
+          )
 ```
 
 - `contains(INSTR() > 0)`
@@ -670,8 +676,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        `type` INSTR(`type`, 'EXAMPLE') > 0
-        )
+          `type` INSTR(`type`, 'EXAMPLE') > 0
+          )
 ```
 
 ```sql
@@ -685,13 +691,13 @@ updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        `type` INSTR(`type`, 'EXAMPLE') > 0
-        )
+          `type` INSTR(`type`, 'EXAMPLE') > 0
+          )
 ```
 
 ```sql
@@ -707,8 +713,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        `type` INSTR(`type`, 'EXAMPLE') > 0
-        )
+          `type` INSTR(`type`, 'EXAMPLE') > 0
+          )
 ```
 
 - `not contains(INSTR() = 0)`
@@ -735,8 +741,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        `type` INSTR(`type`, 'EXAMPLE') = 0
-        )
+          `type` INSTR(`type`, 'EXAMPLE') = 0
+          )
 ```
 
 ```sql
@@ -750,13 +756,13 @@ updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        `type` INSTR(`type`, 'EXAMPLE') = 0
-        )
+          `type` INSTR(`type`, 'EXAMPLE') = 0
+          )
 ```
 
 ```sql
@@ -772,8 +778,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        `type` INSTR(`type`, 'EXAMPLE') = 0
-        )
+          `type` INSTR(`type`, 'EXAMPLE') = 0
+          )
 ```
 
 - `startsWith(INSTR() = 1)`
@@ -800,8 +806,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        `type` INSTR(`type`, 'EXAMPLE') = 1
-        )
+          `type` INSTR(`type`, 'EXAMPLE') = 1
+          )
 ```
 
 ```sql
@@ -815,13 +821,13 @@ updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        `type` INSTR(`type`, 'EXAMPLE') = 1
-        )
+          `type` INSTR(`type`, 'EXAMPLE') = 1
+          )
 ```
 
 ```sql
@@ -837,8 +843,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        `type` INSTR(`type`, 'EXAMPLE') = 1
-        )
+          `type` INSTR(`type`, 'EXAMPLE') = 1
+          )
 ```
 
 - `endsWith(RIGHT())`
@@ -865,8 +871,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        RIGHT(`type`, CHAR_LENGTH ('EXAMPLE')) = 'EXAMPLE'
-        )
+          RIGHT(`type`, CHAR_LENGTH ('EXAMPLE')) = 'EXAMPLE'
+          )
 ```
 
 ```sql
@@ -880,13 +886,13 @@ updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        RIGHT(`type`, CHAR_LENGTH ('EXAMPLE')) = 'EXAMPLE'
-        )
+          RIGHT(`type`, CHAR_LENGTH ('EXAMPLE')) = 'EXAMPLE'
+          )
 ```
 
 ```sql
@@ -902,8 +908,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        RIGHT(`type`, CHAR_LENGTH ('EXAMPLE')) = 'EXAMPLE'
-        )
+          RIGHT(`type`, CHAR_LENGTH ('EXAMPLE')) = 'EXAMPLE'
+          )
 ```
 
 - `lt(<)`
@@ -930,8 +936,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        `display_order` < 3
-        )
+          `display_order` < 3
+          )
 ```
 
 ```sql
@@ -945,13 +951,13 @@ updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        `display_order` < '3'
-        )
+          `display_order` < '3'
+          )
 ```
 
 ```sql
@@ -967,8 +973,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        `display_order` < '3'
-        )
+          `display_order` < '3'
+          )
 ```
 
 - `lte (<=)`
@@ -995,8 +1001,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        `display_order` <= 3
-        )
+          `display_order` <= 3
+          )
 ```
 
 ```sql
@@ -1010,13 +1016,13 @@ updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        `display_order` <= '3'
-        )
+          `display_order` <= '3'
+          )
 ```
 
 ```sql
@@ -1032,8 +1038,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        `display_order` <= '3'
-        )
+          `display_order` <= '3'
+          )
 ```
 
 - `gt(>)`
@@ -1060,8 +1066,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        `display_order` < 3
-        )
+          `display_order` < 3
+          )
 ```
 
 ```sql
@@ -1075,13 +1081,13 @@ updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        `display_order` < '3'
-        )
+          `display_order` < '3'
+          )
 ```
 
 ```sql
@@ -1097,8 +1103,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        `display_order` < '3'
-        )
+          `display_order` < '3'
+          )
 ```
 
 - `gte(>=)`
@@ -1125,8 +1131,8 @@ SELECT `updated_by`,
        `updated`
 FROM `code`
 WHERE (
-        `display_order` >= 3
-        )
+          `display_order` >= 3
+          )
 ```
 
 ```sql
@@ -1140,13 +1146,13 @@ updateMapByMap
 Executed SQL
 ===
 UPDATE
-  `code`
+    `code`
 SET `text`       = '예제3',
     `UPDATED`    = NOW(),
     `UPDATED_BY` = '1004'
 WHERE (
-        `display_order` >= '3'
-        )
+          `display_order` >= '3'
+          )
 ```
 
 ```sql
@@ -1162,8 +1168,8 @@ Executed SQL
 DELETE
 FROM `code`
 WHERE (
-        `display_order` >= '3'
-        )
+          `display_order` >= '3'
+          )
 ```
 
 ## Order by
